@@ -1,292 +1,111 @@
 package model.logic;
 
+import java.awt.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Queue;
+import java.util.Random;
 
-import java.io.FileReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import model.data_structures.IQueue;
-import model.data_structures.IStack;
-import model.data_structures.Node;
-import model.data_structures.Queue;
-import model.data_structures.Stack;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+
+import model.data_structures.*;
 
 /**
  * Definicion del modelo del mundo
  *
  */
-	public class Modelo<T> {
+public class Modelo {
 	/**
 	 * Atributos del modelo del mundo
 	 */
-	private IQueue<Comparendo> colaDatos;
-	private IStack<Comparendo> pilaDatos;
-	private int elementosCargadosPila;
-	private int elementosCargadosCola;
-	public static String PATH = "./data/comparendos_dei_2018_small.geojson";
-	public static String PATH_MIL = "./data/milDatos.geojson";
-	
+
+	/**
+	 * Cola de lista encadenada.
+	 */
+
+	private Queue<Comparendo> datos;
+
+	private static Comparable[] aux;
+
 	/**
 	 * Constructor del modelo del mundo con capacidad predefinida
 	 */
-	public Modelo()
-	{
-		colaDatos = new Queue<Comparendo>();
-		pilaDatos = new Stack<Comparendo>();
-		int elementosCargadosCola = 0;
-		int elementosCargadosPila = 0;
+	public Modelo() {
 
+		datos = new Queue<>();
 	}
 
-	// Solucion de carga de datos publicada al curso Estructuras de Datos 2020-10 
-	public Stack<Comparendo> cargarDatosPila() {
-		pilaDatos = new Stack<Comparendo>();
+	/**
+	 * Carga el archivo .JSON en una lista enlazada.
+	 *
+	 * @throws FileNotFoundException. Si no encuentra el archivo.
+	 */
 
-		JsonReader reader;
-		try {
-			reader = new JsonReader(new FileReader(PATH));
-			JsonElement elem = JsonParser.parseReader(reader);
-			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
-			
-			
-			SimpleDateFormat parser=new SimpleDateFormat("yyyy/MM/dd");
+	public void cargarCola(int n) throws FileNotFoundException {
+		//Definir mejor la entrada para el lector de json
+		long inicio = System.currentTimeMillis();
+		long inicio2 = System.nanoTime();
+		String dir = "./data/Comparendos_DEI_2018_Bogotá_D.C.geojson";
+		File archivo = new File(dir);
+		JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(archivo)));
+		JsonObject gsonObj0 = JsonParser.parseReader(reader).getAsJsonObject();
 
-			for(JsonElement e: e2) {
-				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
-				
-				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();	
-				Date FECHA_HORA = parser.parse(s); 
-				
-				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETE").getAsString();
-				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHI").getAsString();
-				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVI").getAsString();
-				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
-				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRAC").getAsString();	
-				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+		JsonArray comparendos = gsonObj0.get("features").getAsJsonArray();
+		int i = 0;
+		while (i < comparendos.size()) {
+			JsonElement obj = comparendos.get(i);
+			JsonObject gsonObj = obj.getAsJsonObject();
 
-				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
-						.get(0).getAsDouble();
-				
-				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
-						.get(1).getAsDouble();
+			JsonObject gsonObjpropiedades = gsonObj.get("properties").getAsJsonObject();
+			int objid = gsonObjpropiedades.get("OBJECTID").getAsInt();
+			String fecha = gsonObjpropiedades.get("FECHA_HORA").getAsString();
+			//String mediodeteccion=gsonObjpropiedades.get("MEDIO_DETECCION").getAsString();
+			String mediodeteccion = "";
+			String clasevehiculo = gsonObjpropiedades.get("CLASE_VEHI").getAsString();
+			String tiposervi = gsonObjpropiedades.get("TIPO_SERVI").getAsString();
+			String infraccion = gsonObjpropiedades.get("INFRACCION").getAsString();
+			String desinfraccion = gsonObjpropiedades.get("DES_INFRAC").getAsString();
+			String localidad = gsonObjpropiedades.get("LOCALIDAD").getAsString();
+			//String municipio= gsonObjpropiedades.get("MUNICIPIO").getAsString();
+			String municipio = "";
 
-				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, DES_INFRAC, LOCALIDAD, longitud, latitud);
-				pilaDatos.push(c);
-				elementosCargadosPila++;
-			}
+			JsonObject gsonObjgeometria = gsonObj.get("geometry").getAsJsonObject();
 
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			JsonArray gsonArrcoordenadas = gsonObjgeometria.get("coordinates").getAsJsonArray();
+			double longitud = gsonArrcoordenadas.get(0).getAsDouble();
+			double latitud = gsonArrcoordenadas.get(1).getAsDouble();
+
+			Comparendo agregar = new Comparendo(objid, fecha, mediodeteccion, clasevehiculo, tiposervi, infraccion, desinfraccion, localidad, municipio, longitud, latitud);
+			datosCola.insertarFinal(agregar);
+			i++;
 		}
-		return (Stack<Comparendo>) pilaDatos;	
-		
-	}
-	// Solucion de carga de datos publicada al curso Estructuras de Datos 2020-10 
-	public Queue<Comparendo> cargarDatosCola() {
-		colaDatos = new Queue<Comparendo>();
+		long fin2 = System.nanoTime();
+		long fin = System.currentTimeMillis();
 
-		JsonReader reader;
-		try {
-			reader = new JsonReader(new FileReader(PATH));
-			JsonElement elem = JsonParser.parseReader(reader);
-			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
-			
-			
-			SimpleDateFormat parser=new SimpleDateFormat("yyyy/MM/dd");
 
-			for(JsonElement e: e2) {
-				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
-				
-				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();	
-				Date FECHA_HORA = parser.parse(s); 
-				
-				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETE").getAsString();
-				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHI").getAsString();
-				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVI").getAsString();
-				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
-				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRAC").getAsString();	
-				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+		System.out.println((fin2 - inicio2) / 1.0e9 + " segundos, de la carga de datos normal.");
 
-				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
-						.get(0).getAsDouble();
-				
-				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
-						.get(1).getAsDouble();
+		Comparable[] copia = copiarComparendos();
+		shuffle(copia);
 
-				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, DES_INFRAC, LOCALIDAD, longitud, latitud);
-				colaDatos.enQueue(c);
-				elementosCargadosCola++;
-			}
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+		inicio = System.nanoTime();
+		for (i = 0; i < n && i < datosCola.darLongitud(); i++) {
+			datosCola2.agregar(copia[i]);
 		}
-		return (Queue<Comparendo>) colaDatos;	
-		
-	}
-	
-	/**
-	 * Servicio de consulta de numero de elementos presentes en el modelo 
-	 * @return numero de elementos presentes en el modelo
-	 */
-	public int darTamanoCola()
-	{
-		return colaDatos.darTamano();
-	}
-	
-	/**
-	 * Servicio de consulta de numero de elementos presentes en el modelo 
-	 * @return numero de elementos presentes en el modelo
-	 */
-	public int darTamanoPila()
-	{
-		return pilaDatos.darTamano();
-	}
+		fin = System.nanoTime();
+		System.out.println((fin - inicio) / 1.0e9 + " segundos, de la carga de datos en heap.");
 
-	/**
-	 * Requerimiento de agregar dato
-	 * @param dato
-	 */
-	public void agregarPila(Comparendo dato)
-	{	
-		pilaDatos.push(dato);
-	}
-	
-	/**
-	 * Requerimiento de agregar dato
-	 * @param dato
-	 */
-	public void agregarCola(Comparendo dato)
-	{	
-		colaDatos.enQueue(dato);
-	}
-	
-	/**
-	 * Requerimiento buscar dato
-	 * @param dato Dato a buscar
-	 * @return dato encontrado
-	 */
-	public int buscarCola(T pElemento)
-	{
-		return 0;
-	}
-	
-	/**
-	 * Requerimiento buscar dato
-	 * @param dato Dato a buscar
-	 * @return indice encontrado
-	 */
-	public int buscarPila(Comparendo pElemento)
-	{
-		return 0;
-	}
-	
-	/**
-	 * Requerimiento eliminar dato de la cola
-	 * @param dato Dato a eliminar
-	 * @return dato eliminado
-	 */
-	public void eliminarCola()
-	{
-		colaDatos.deQueue();
-	}
-	/**
-	 * Requerimiento eliminar dato de la pila
-	 * @param dato Dato a eliminar
-	 * @return dato eliminado
-	 */
-	public void eliminaPila()
-	{
-		try {
-			pilaDatos.pop();
-		} catch (Exception e) {
-			e.getMessage();
+		inicio = System.nanoTime();
+		for (i = 0; i < n && i < datosCola.darLongitud(); i++) {
+			datosCola3.agregar(copia[i]);
 		}
+		fin = System.nanoTime();
+		System.out.println((fin - inicio) / 1.0e9 + " segundos, de la carga de datos en cola.");
+
 	}
-
-	public int getElementosCargadosPila() {
-		return elementosCargadosPila;
-	}
-
-	public int getElementosCargadosCola() {
-		return elementosCargadosCola;
-	}
-
-	public Queue<Comparendo> buscarGrupoMasGrandeCola(Queue<Comparendo> datos3) {
-		int contadorMenor = 0;
-		int contadorMayor = 0;
-		Queue<Comparendo> colaMenor = new Queue<Comparendo>();
-		Queue<Comparendo> colaMayor = new Queue<Comparendo>();
-		
-		boolean finCiclo = false;
-		
-		
-		while (!finCiclo) {
-			if( datos3.estaVacia() ) {
-				finCiclo = true;
-			}
-			else {
-				//sacar elemento de la cola
-				Comparendo temporal = datos3.deQueue();
-				//Si es el primero	
-				if( colaMenor.estaVacia() ) {
-						colaMenor.enQueue(temporal);
-						contadorMenor++;
-				}
-				//Si ya hay algo en menor y tienen los mismos codigos
-				else if (temporal.getCodigoInfraccion().equalsIgnoreCase(colaMenor.peek().getCodigoInfraccion()) == true) {
-						colaMenor.enQueue(temporal);
-						contadorMenor++;
-				}
-				//Si ya hay algo en menor pero tiene distintos codigos
-				else if ( temporal.getCodigoInfraccion().equalsIgnoreCase(colaMenor.peek().getCodigoInfraccion()) == false ){
-						if(contadorMenor > contadorMayor)
-							colaMayor = colaMenor;
-							colaMenor = new Queue<Comparendo>();
-							contadorMayor = contadorMenor;
-							contadorMenor = 0;
-							
-							colaMenor.enQueue(temporal);
-							contadorMenor++;
-						}
-						else {
-							colaMenor = new Queue<Comparendo>();
-							contadorMenor = 0;
-				}
-			}
-		}
-		return colaMayor;	
-	}
-
-
-	public Stack<Comparendo> buscarUltimosNPila(Stack<Comparendo> datos4, int pN, String codigo) {
-		Stack<Comparendo> pila = new Stack<Comparendo>();
-		boolean finCiclo = false;
-		int contador = 0;
-		while (!finCiclo) {
-			if( datos4.estaVacia() || contador == pN ) {
-				finCiclo = true;
-			}
-			else {
-				Comparendo temporal = datos4.pop();
-				if( temporal.getCodigoInfraccion().equalsIgnoreCase(codigo) ) {
-					pila.push(temporal);
-					contador++;
-				}
-			}
-			
-		}
-		return pila;
-		
-	}
-
-
-
 }

@@ -1,80 +1,106 @@
 package model.data_structures;
 
+import model.logic.Comparendo;
+
 public class Queue<T> implements IQueue<T> {
 
-	//Atributo
-	private Node<T> primero;
-	private Node<T> ultimo;
-	private int tamano;
-	
-	//Constructor
-	public Queue() {
-		tamano = 0;
-		primero = null;
-		ultimo = null;
-	}
+    //Atributos
+    private Node head;
 
-	/**
-	 * Se agrega un elemento al final de la cola.
-	 * @param pElemento
-	 */
-	public void enQueue(T pElemento) {
-		Node<T> nuevoUltimo = new Node<T>(pElemento);
-		nuevoUltimo.cambiarSiguiente(null);
-		if(estaVacia()) {
-			primero = nuevoUltimo;
-			ultimo = nuevoUltimo;
-		}
-		else {
-		ultimo.cambiarSiguiente(nuevoUltimo);
-		ultimo = nuevoUltimo;
-		}
-		tamano++;
-	}
+    private Node tail;
 
-	/**
-	 * Se regresa el primer elemento y se elimina de la cola.
-	 * @return Primer elemento.
-	 */
-	public T deQueue() {
-		if(estaVacia()) {
-			ultimo = null;
-			return null;
-		}
-		
-		T temp = primero.darElemento();
-		primero = primero.darSiguiente();
-		tamano--;
-		
-		return temp;
-	}
+    private int size;
 
-	/**
-	 * Se comprueba que exista al menos un elemento en la cola.
-	 * @return True si está vacia, false si hay al menos un elemento.
-	 */
-	public boolean estaVacia() {
-		return tamano == 0;
-	}
+    //Constructor
+    public Queue() {
+        size = 0;
+        head = null;
+        tail = null;
+    }
 
-	/**
-	 * Se da el primer elemento y no es eliminado.
-	 * @return Primer elemento
-	 */
-	public T peek() {
-		if (estaVacia()) {
-			return null;
-		}
-		else {
-			return primero.darElemento();
-		}
-	}
+    /**
+     * Se agrega un elemento al final de la cola.
+     *
+     * @param pElemento
+     */
+    public void enQueue(T pElemento) {
+        if (tail == null) {
+            tail = new Node(pElemento);
+            head = tail;
+        } else {
+            Node<T> nodo = new Node<>(pElemento);
+            tail.cambiarSiguiente(nodo);
+            tail = nodo;
+        }
+        size++;
+    }
 
-	/**
-	 * Se da el tamaño de la cola.
-	 * @return tamano
-	 */
-	public int darTamano() {
-		return tamano; 
-	}
+    /**
+     * Se regresa el primer elemento y se elimina de la cola.
+     *
+     * @return Primer elemento.
+     */
+    public T deQueue() {
+
+        if (isEmpty()) {
+            return null;
+        } else {
+            T toReturn = (T) head.darElemento();
+            head = head.darSiguiente();
+            size--;
+            return toReturn;
+        }
+    }
+
+    /**
+     * Se comprueba que exista al menos un elemento en la cola.
+     *
+     * @return True si está vacia, false si hay al menos un elemento.
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+
+    public T getFirst() {
+        if (isEmpty())
+            return null;
+        else {
+            return (T) head.darElemento();
+        }
+
+    }
+
+    public T getLast() {
+        if (isEmpty())
+            return null;
+        return (T) tail.darElemento();
+    }
+
+    /**
+     * Se da el tamaño de la cola.
+     *
+     * @return tamano
+     */
+    public int size() {
+        return size;
+    }
+
+
+    public Comparable<Comparendo>[] copiarComparendos() {
+
+        Node actual = head;
+        int i = 0;
+        Comparable[] array = new Comparable[size];
+
+        while (actual.darSiguiente() != null) {
+
+            array[i] = (Comparable) actual.darElemento();
+            actual = actual.darSiguiente();
+
+            i++;
+        }
+
+        return array;
+    }
 }

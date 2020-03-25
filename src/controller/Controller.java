@@ -2,8 +2,6 @@ package controller;
 
 import java.util.Scanner;
 
-import model.data_structures.Queue;
-import model.data_structures.Stack;
 import model.logic.Comparendo;
 import model.logic.Modelo;
 import view.View;

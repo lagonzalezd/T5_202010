@@ -7,7 +7,6 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
-import model.data_structures.Stack;
 import model.logic.Comparendo;
 
 public class StackTest {
@@ -24,10 +23,10 @@ public class StackTest {
 	public void setUp() throws Exception {
 		pilaDatos = new Stack();
 		Date fecha = new Date();
-		objeto1 = new Comparendo(29042, fecha, "DEAP", "Automovil", "Particular", "C02", "ESTACIONAR UN VEHÍCULO EN SITIOS PROHIBIDOS.", "Barrios Unidos", 1.02, 104);
-		objeto2 = new Comparendo(509329, fecha, "LAPIZ", "Camioneta", "Particular", "C35", "NO REALIZAR LA REVISIÓN TECNICOMECÁNICA EN EL PLAZO LEGAL" , "Tunjuelito", 1.02, 104);
+		objeto1 = new Comparendo(29042, fecha, "DEAP", "Automovil", "Particular", "C02", "ESTACIONAR UN VEHï¿½CULO EN SITIOS PROHIBIDOS.", "Barrios Unidos", 1.02, 104);
+		objeto2 = new Comparendo(509329, fecha, "LAPIZ", "Camioneta", "Particular", "C35", "NO REALIZAR LA REVISIï¿½N TECNICOMECï¿½NICA EN EL PLAZO LEGAL" , "Tunjuelito", 1.02, 104);
 		objeto3 = new Comparendo(519553, fecha, "LAPIZ", "Motocicleta", "Particular", "B02", "LICENCIA VENCIDA", "Bosa", 1.02, 104);
-		objeto4 = new Comparendo(176695, fecha, "DEAP", "Automovil", "Particular", "C02", "ESTACIONAR UN VEHÍCULO EN SITIOS PROHIBIDOS.", "Teusaquillo", 1.02, 104);
+		objeto4 = new Comparendo(176695, fecha, "DEAP", "Automovil", "Particular", "C02", "ESTACIONAR UN VEHï¿½CULO EN SITIOS PROHIBIDOS.", "Teusaquillo", 1.02, 104);
 		numero = 1400394; 
 		texto = "DEFG";
 	}
@@ -101,7 +100,7 @@ public class StackTest {
 			setUp();
 			pilaDatos.push(objeto4);
 			pilaDatos.push(objeto2);
-			assertTrue("Debería ser el elemento objeto2", pilaDatos.peek().equals(objeto2) );
+			assertTrue("Deberï¿½a ser el elemento objeto2", pilaDatos.peek().equals(objeto2) );
 			pilaDatos.push(texto);
 			pilaDatos.pop();
 			pilaDatos.push(objeto1);
