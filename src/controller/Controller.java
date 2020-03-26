@@ -8,7 +8,7 @@ import view.View;
 
 public class Controller {
 
-	private Modelo<Comparendo> modelo;
+	private Modelo modelo;
 
 	private View view;
 
@@ -24,16 +24,18 @@ public class Controller {
 		boolean fin = false;
 		
 		while( !fin ){
+
 			view.printMenu();
 
 			int option = lector.nextInt();
 			switch(option){
+
 				case 1:
 					
 					break;
 					
 				default: 
-					view.printMessage("------------- Opción invalida!! ---------- ");
+					view.printMessage("------------- Opciï¿½n invalida!! ---------- ");
 					break;
 			}
 		}
