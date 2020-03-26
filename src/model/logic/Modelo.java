@@ -1,12 +1,10 @@
 package model.logic;
 
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import model.data_structures.IQueue;
-import model.data_structures.Queue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,49 +15,39 @@ import com.google.gson.stream.JsonReader;
  * Definicion del modelo del mundo
  *
  */
-public class Modelo<T> {
-	/**
-	 * Atributos del modelo del mundo
+public class Modelo {
+
+	public static String PATH = "./data/Comparendos_DEI_2018_Bogotá_D.C_small.geojson";
+	
+	/*
+	 * Datos Grandes:
+	 * public static String PATH = "./data/Comparendos_DEI_2018_Bogotá_D.C.geojson";
 	 */
-	private IQueue<Comparendo> colaDatos;
-	public static String PATH = "./data/comparendos_dei_2018_small.geojson";
-	public static String PATH_MIL = "./data/milDatos.geojson";
-
-	/**
-	 * Constructor del modelo del mundo con capacidad predefinida
-	 */
-	public Modelo() {
-		colaDatos = new Queue<Comparendo>();
-
-	}
-
-
-
-	// Solucion de carga de datos publicada al curso Estructuras de Datos 2020-10
-	public Queue<Comparendo> cargarDatosCola() {
-		colaDatos = new Queue<Comparendo>();
+	
+	public void cargarDatos() {
 
 		JsonReader reader;
+		
 		try {
 			reader = new JsonReader(new FileReader(PATH));
 			JsonElement elem = JsonParser.parseReader(reader);
 			JsonArray e2 = elem.getAsJsonObject().get("features").getAsJsonArray();
 
+			SimpleDateFormat parser=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
-			SimpleDateFormat parser = new SimpleDateFormat("yyyy/MM/dd");
-
-			for (JsonElement e : e2) {
+			for(JsonElement e: e2) {
 				int OBJECTID = e.getAsJsonObject().get("properties").getAsJsonObject().get("OBJECTID").getAsInt();
 
-				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();
-				Date FECHA_HORA = parser.parse(s);
+				String s = e.getAsJsonObject().get("properties").getAsJsonObject().get("FECHA_HORA").getAsString();	
+				Date FECHA_HORA = parser.parse(s); 
 
-				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETE").getAsString();
-				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHI").getAsString();
-				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVI").getAsString();
+				String MEDIO_DETE = e.getAsJsonObject().get("properties").getAsJsonObject().get("MEDIO_DETECCION").getAsString();
+				String CLASE_VEHI = e.getAsJsonObject().get("properties").getAsJsonObject().get("CLASE_VEHICULO").getAsString();
+				String TIPO_SERVI = e.getAsJsonObject().get("properties").getAsJsonObject().get("TIPO_SERVICIO").getAsString();
 				String INFRACCION = e.getAsJsonObject().get("properties").getAsJsonObject().get("INFRACCION").getAsString();
-				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRAC").getAsString();
+				String DES_INFRAC = e.getAsJsonObject().get("properties").getAsJsonObject().get("DES_INFRACCION").getAsString();	
 				String LOCALIDAD = e.getAsJsonObject().get("properties").getAsJsonObject().get("LOCALIDAD").getAsString();
+				String MUNICIPIO = e.getAsJsonObject().get("properties").getAsJsonObject().get("MUNICIPIO").getAsString();
 
 				double longitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
 						.get(0).getAsDouble();
@@ -67,16 +55,14 @@ public class Modelo<T> {
 				double latitud = e.getAsJsonObject().get("geometry").getAsJsonObject().get("coordinates").getAsJsonArray()
 						.get(1).getAsDouble();
 
-				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, DES_INFRAC, LOCALIDAD, longitud, latitud);
-				colaDatos.enQueue(c);
+				Comparendo c = new Comparendo(OBJECTID, FECHA_HORA, DES_INFRAC, MEDIO_DETE, CLASE_VEHI, TIPO_SERVI, INFRACCION, LOCALIDAD, MUNICIPIO, longitud, latitud);
 			}
 
-		} catch (Exception e) {
+		}
+		catch (FileNotFoundException | ParseException e) 
+		{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		return (Queue<Comparendo>) colaDatos;
-
 	}
-
 }

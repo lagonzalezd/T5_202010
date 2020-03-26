@@ -2,101 +2,124 @@ package model.logic;
 
 import java.util.Date;
 
-public class Comparendo {
-	private int id;
-	private Date fecha;
-	private String medioDete;
-	private String claseDeVehiculo;
-	private String tipoDeServicio;
-	private String codigoInfraccion;
-	private String descripcionInfraccion;
-	private String localidad;
-	private double longitud;
-	private double latitud;
-	
-	public Comparendo(int id, Date fecha, String medioDete, String claseDeVehiculo, String tipoDeServicio, String codigoInfraccion,
-			String descripcionInfraccion, String localidad, double longitud, double latitud) {
-		this.id = id;
-		this.fecha = fecha;
-		this.medioDete = medioDete;
-		this.claseDeVehiculo = claseDeVehiculo;
-		this.tipoDeServicio = tipoDeServicio;
-		this.codigoInfraccion = codigoInfraccion;
-		this.descripcionInfraccion = descripcionInfraccion;
-		this.localidad = localidad;
-		this.longitud = longitud;
-		this.latitud = latitud;
-	}
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Date getFecha() {
-		return fecha;
-	}
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-	public String getClaseDeVehiculo() {
-		return claseDeVehiculo;
-	}
-	public void setClaseDeVehiculo(String claseDeVehiculo) {
-		this.claseDeVehiculo = claseDeVehiculo;
-	}
-	public String getTipoDeServicio() {
-		return tipoDeServicio;
-	}
-	public void setTipoDeServicio(String tipoDeServicio) {
-		this.tipoDeServicio = tipoDeServicio;
-	}
-	public String getCodigoInfraccion() {
-		return codigoInfraccion;
-	}
-	public void setCodigoInfraccion(String codigoInfraccion) {
-		this.codigoInfraccion = codigoInfraccion;
-	}
-	public String getDescripcionInfraccion() {
-		return descripcionInfraccion;
-	}
-	public void setDescripcionInfraccion(String descripcionInfraccion) {
-		this.descripcionInfraccion = descripcionInfraccion;
-	}
-	public String getLocalidad() {
-		return localidad;
-	}
-	public void setLocalidad(String localidad) {
-		this.localidad = localidad;
-	}
+public class Comparendo implements Comparable<Comparendo>{
 
-	public String getMedioDete() {
-		return medioDete;
-	}
+    private int objectId;
+    private Date fecha_hora;
+    private String des_infrac;
+    private String medio_dete;
+    private String clase_vehi;
+    private String tipo_servi;
+    private String infraccion;
+    private String localidad;
+    private String municipio;
 
-	public void setMedioDete(String medioDete) {
-		this.medioDete = medioDete;
-	}
+    private double latitud;
+    private double longitud;
 
-	public double getLongitud() {
-		return longitud;
-	}
+    public Comparendo(int objeId, Date fecha, String descripcion, String detencion, String claseVeh, String tipoSer, String codInfraccion, String localidadP, String pMunicipio, double lonP, double latP) {
 
-	public void setLongitud(double longitud) {
-		this.longitud = longitud;
-	}
+        objectId = objeId;
+        fecha_hora = fecha;
+        des_infrac = descripcion;
+        medio_dete = detencion;
+        clase_vehi = claseVeh;
+        tipo_servi = tipoSer;
+        infraccion = codInfraccion;
+        localidad = localidadP;
+        longitud = lonP;
+        latitud = latP;
+        municipio = pMunicipio;
+    }
 
-	public double getLatitud() {
-		return latitud;
-	}
+    /**
+     * @return the objectId
+     */
+    public int getObjectId() {
+        return objectId;
+    }
 
-	public void setLatitud(double latitud) {
-		this.latitud = latitud;
-	}
-	
-	public String toString() {
-		return "(" + codigoInfraccion + ") (" + id + ") (" + fecha + ") (" + claseDeVehiculo + ") (" + tipoDeServicio + ") (" + localidad + ")";
-	}
+    /**
+     * @return the fecha_hora
+     */
+    public Date getFecha_hora() {
+        return fecha_hora;
+    }
 
+    /**
+     * @return the des_infrac
+     */
+    public String getDes_infrac() {
+        return des_infrac;
+    }
+
+    /**
+     * @return the medio_dete
+     */
+    public String getMedio_dete() {
+        return medio_dete;
+    }
+
+    /**
+     * @return the clase_vehi
+     */
+    public String getClase_vehi() {
+        return clase_vehi;
+    }
+
+    /**
+     * @return the tipo_servi
+     */
+    public String getTipo_servi() {
+        return tipo_servi;
+    }
+
+    /**
+     * @return the infraccion
+     */
+    public String getInfraccion() {
+        return infraccion;
+    }
+
+    /**
+     * @return the localidad
+     */
+    public String getLocalidad() {
+        return localidad;
+    }
+    
+    /**
+     * @return the fecha_hora
+     */
+    public String getmunicipio() {
+        return municipio;
+    }
+
+    /**
+     * @return the latitud
+     */
+    public double getLatitud() {
+        return latitud;
+    }
+
+    /**
+     * @return the longitud
+     */
+    public double getLongitud() {
+        return longitud;
+    }
+
+    @Override
+    public String toString() {
+        return "Comparendo [OBJECTID= " + objectId + ", FECHA_HORA= " + fecha_hora + ", DES_INFRAC= " + des_infrac
+                + ", MEDIO_DETE= " + medio_dete + ", CLASE_VEHI= " + clase_vehi + ", TIPO_SERVI =" + tipo_servi
+                + ", INFRACCION= " + infraccion + ", LOCALIDAD= " + localidad + ", latitud= " + latitud + ", longitud= "
+                + longitud + "]";
+    }
+
+
+    public int compareTo(Comparendo pComparendo) 
+    {
+    	return new Double (this.getLatitud()).compareTo(new Double(pComparendo.getLatitud()));
+    }
 }
