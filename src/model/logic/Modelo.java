@@ -18,6 +18,8 @@ import com.google.gson.stream.JsonReader;
  */
 public class Modelo {
 
+
+
     public static String PATH = "./data/Comparendos_DEI_2018_Bogot�_D.C_small.geojson";
 
     /*
